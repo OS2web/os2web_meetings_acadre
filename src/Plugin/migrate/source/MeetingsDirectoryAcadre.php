@@ -230,9 +230,7 @@ class MeetingsDirectoryAcadre extends MeetingsDirectory {
     $source_bullet_points = $manifestXml->xpath("//table[@name='agendaitemparents']");
 
     foreach ($source_bullet_points as $bullet_point) {
-      $id = $this->readValueFromSimpleXmlElement($bullet_point, "table[@name='agendaitem']/fields/field[@name='sysid']");
-
-      $bpNumber = $this->readValueFromSimpleXmlElement($bullet_point, "fields/field[@name='sort']");
+      // Getting title.
       $title = $this->readValueFromSimpleXmlElement($bullet_point, "table[@name='agendaitem']/fields/field[@name='name']");
 
       // Skipping bullet points with no titles.
@@ -240,8 +238,13 @@ class MeetingsDirectoryAcadre extends MeetingsDirectory {
         continue;
       }
 
+      // Getting fields.
+      $id = $this->readValueFromSimpleXmlElement($bullet_point, "table[@name='agendaitem']/fields/field[@name='sysid']");
+      $bpNumber = $this->readValueFromSimpleXmlElement($bullet_point, "fields/field[@name='sort']");
       $publishingType = (int) $this->readValueFromSimpleXmlElement($bullet_point, "table[@name='agendaitem']/fields/field[@name='access']");
       $access = ($publishingType === 1) ? TRUE : FALSE;
+      $caseno = $this->readValueFromSimpleXmlElement($bullet_point, "table[@name='agendaitem']/fields/field[@name='caseno']");
+      $comname = $this->readValueFromSimpleXmlElement($bullet_point, "table[@name='agendaitem']/fields/field[@name='comname']");
 
       // Getting attachments (text).
       $source_attachments = $bullet_point->xpath("table[@name='agendaitem']/table[@name='bullet']");
@@ -262,6 +265,8 @@ class MeetingsDirectoryAcadre extends MeetingsDirectory {
         'number' => $bpNumber,
         'title' => $title,
         'access' => $access,
+        'case_nr' => $caseno,
+        'com_name' => $comname,
         'attachments' => $canonical_attachments,
         'enclosures' =>  $canonical_enclosures,
       ];
